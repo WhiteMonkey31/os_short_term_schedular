@@ -21,6 +21,7 @@ struct process{
     // to store dynamic data (automatic)
     int cP;             // current Priority
     int lBT;            // left Brust Time
+    bool in_queue{false};   // check whether process is in queue or not
     // int cpuT;           // CPU time to measure total completion time
     // int T_CT;           // total completion time
 };
@@ -44,12 +45,26 @@ void display_logs_on_terminal(const std::vector<process> &processes){
 
 }
 
-void calculations_non_preemtive(const std::vector<process> &processes, std::queue<int> &readyqueue){
-    for(int i{0};i<processes.size();i++){
-        if(processes[i].AT<=currentTime){
-            readyqueue.push(processes[i].pID);
+void calculations_non_preemtive(std::vector<process> &processes, std::queue<int> &readyqueue){
+    // int n=processes.size();
+    // bool check[n];
+    // for(int i{0};i<sizeof(check);i++){
+    //     check[i]=false;
+    // }
+    for(int j{0};j<processes.size();j++){
+        for(int i{0};i<processes.size();i++){
+            if(processes[i].AT<=currentTime){
+                
+                if(!processes[i].in_queue){
+                    readyqueue.push(processes[i].pID);
+                    processes[i].in_queue=true;
+                }
+                
+            }
         }
+        currentTime++;
     }
+    
 }
 
 void display_readyqueue(const std::vector<process> &processes, std::queue<int> &readyqueue){
