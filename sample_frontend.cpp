@@ -1,184 +1,301 @@
-// sample_frontend.cpp
-
-#include <iostream>
-#include <vector>
-#include <queue>
-
 #include "sample_frontend.hpp"
 #include "sample_backend.hpp"
-#include "sample_display_terminal.hpp"
 
-void reset_processes(std::vector<process> &processes)
+#include "include/SFML/Graphics.hpp"
+#include <iostream>
+#include <sstream>
+
+void drawText(
+    sf::RenderWindow &window,
+    sf::Font &font,
+    const std::string &text,
+    int size,
+    float x,
+    float y)
 {
-    for (process &p : processes) {
+    sf::Text t;
 
-        p.WT = 0;
-        p.TT = 0;
-        p.RT = 0;
-        p.CT = 0;
+    t.setFont(font);
+    t.setString(text);
+    t.setCharacterSize(size);
+    t.setFillColor(sf::Color::White);
+    t.setPosition(x, y);
 
-        p.assignTime = 0;
-
-        p.lBT = p.BT;
-
-        p.in_queue = false;
-    }
-}
-
-void manual_process_input(
-    std::vector<process> &processes)
-{
-    int n;
-
-    std::cout << "\nEnter Number of Processes: ";
-    std::cin >> n;
-
-    for (int i = 0; i < n; i++) {
-
-        process p;
-
-        std::cout << "\nProcess P-" << i << '\n';
-
-        p.pID = i;
-
-        std::cout << "Arrival Time: ";
-        std::cin >> p.AT;
-
-        std::cout << "Burst Time: ";
-        std::cin >> p.BT;
-
-        std::cout << "Priority: ";
-        std::cin >> p.P;
-
-        processes.push_back(p);
-    }
-}
-
-void algorithm_menu(
-    std::vector<process> &processes)
-{
-    int choice;
-
-    std::cout << "\n==============================\n";
-    std::cout << "CPU Scheduling Algorithms\n";
-    std::cout << "==============================\n";
-
-    std::cout << "1. FCFS\n";
-    std::cout << "2. Non-Preemptive SJF\n";
-    std::cout << "3. Preemptive SJF (SRTF)\n";
-    std::cout << "4. Round Robin\n";
-    std::cout << "5. Non-Preemptive Priority\n";
-    std::cout << "6. Preemptive Priority\n";
-
-    std::cout << "\nEnter Choice: ";
-    std::cin >> choice;
-
-    std::queue<int> readyqueue;
-
-    reset_processes(processes);
-
-    switch (choice) {
-
-        case 1:
-
-            fill_readyqueue_non_preemtive_fcfs(
-                processes,
-                readyqueue
-            );
-
-            executing_readyqueue_fcfs(
-                processes,
-                readyqueue
-            );
-
-            break;
-
-        case 2:
-
-            fill_readyqueue_non_preemtive_sjf(
-                processes,
-                readyqueue
-            );
-
-            executing_readyqueue_fcfs(
-                processes,
-                readyqueue
-            );
-
-            break;
-
-        case 3:
-
-            initialize_processes_for_preemtive(
-                processes
-            );
-
-            execute_preemptive_sjf(
-                processes
-            );
-
-            break;
-
-        case 4:
-
-            initialize_processes_for_preemtive(
-                processes
-            );
-
-            std::cout << "\nEnter Time Quantum: ";
-            std::cin >> timeQuantum;
-
-            execute_round_robin(
-                processes
-            );
-
-            break;
-
-        case 5:
-
-            execute_priority_non_preemptive(
-                processes
-            );
-
-            break;
-
-        case 6:
-
-            initialize_processes_for_preemtive(
-                processes
-            );
-
-            execute_priority_preemptive(
-                processes
-            );
-
-            break;
-
-        default:
-
-            std::cout << "\nInvalid Choice\n";
-            return;
-    }
-
-    calculate_TT_WT_RT(processes);
-
-    display_final_result(
-        processes,
-        readyqueue
-    );
+    window.draw(t);
 }
 
 void launch_frontend()
 {
+    sf::RenderWindow window(
+        sf::VideoMode(1200, 700),
+        "OS Scheduler Simulator"
+    );
+
+    sf::Font font;
+
+    if (!font.loadFromFile("assets/arial.ttf")) {
+
+        std::cout << "Font not found\n";
+        return;
+    }
+
     std::vector<process> processes;
 
-    std::cout << "=====================================\n";
-    std::cout << "CPU Scheduling Simulator\n";
-    std::cout << "=====================================\n";
+    int selectedAlgorithm = 0;
 
-    manual_process_input(processes);
+    bool simulationDone = false;
 
-    display_table_on_terminal(processes);
+    // Sample Input
+    processes.push_back({0,3,3,2});
+    processes.push_back({1,4,1,5});
+    processes.push_back({2,2,2,3});
+    processes.push_back({3,0,4,1});
+    processes.push_back({4,1,5,4});
 
-    algorithm_menu(processes);
+    while (window.isOpen()) {
+
+        sf::Event event;
+
+        while (window.pollEvent(event)) {
+
+            if (event.type == sf::Event::Closed)
+                window.close();
+
+            if (event.type == sf::Event::KeyPressed) {
+
+                // FCFS
+                if (event.key.code == sf::Keyboard::Num1) {
+
+                    selectedAlgorithm = 1;
+                }
+
+                    selectedAlgorithm = 2;
+                }
+   // Non Preemptive SJF
+                else if (event.key.code == sf::Keyboard::Num2) {
+
+             
+                // Preemptive SJF
+                else if (event.key.code == sf::Keyboard::Num3) {
+
+                    selectedAlgorithm = 3;
+                }
+
+                // Round Robin
+                else if (event.key.code == sf::Keyboard::Num4) {
+
+                    selectedAlgorithm = 4;
+                }
+
+                // Priority Non Preemptive
+                else if (event.key.code == sf::Keyboard::Num5) {
+
+                    selectedAlgorithm = 5;
+                }
+
+                // Priority Preemptive
+                else if (event.key.code == sf::Keyboard::Num6) {
+
+                    selectedAlgorithm = 6;
+                }
+
+                // Run Simulation
+                else if (event.key.code == sf::Keyboard::Enter) {
+
+                    simulationDone = true;
+
+                    std::queue<int> readyqueue;
+
+                    initialize_processes_for_preemtive(processes);
+
+                    if (selectedAlgorithm == 1) {
+
+                        fill_readyqueue_non_preemtive_fcfs(
+                            processes,
+                            readyqueue
+                        );
+
+                        executing_readyqueue_fcfs(
+                            processes,
+                            readyqueue
+                        );
+                    }
+
+                    else if (selectedAlgorithm == 2) {
+
+                        fill_readyqueue_non_preemtive_sjf(
+                            processes,
+                            readyqueue
+                        );
+
+                        executing_readyqueue_fcfs(
+                            processes,
+                            readyqueue
+                        );
+                    }
+
+                    else if (selectedAlgorithm == 3) {
+
+                        execute_preemptive_sjf(processes);
+                    }
+
+                    else if (selectedAlgorithm == 4) {
+
+                        execute_round_robin(processes);
+                    }
+
+                    else if (selectedAlgorithm == 5) {
+
+                        execute_priority_non_preemptive(processes);
+                    }
+
+                    else if (selectedAlgorithm == 6) {
+
+                        execute_priority_preemptive(processes);
+                    }
+
+                    calculate_TT_WT_RT(processes);
+                }
+            }
+        }
+
+
+        window.clear(sf::Color(30, 30, 30));
+
+        drawText(window, font,
+            "OS Scheduler Simulator",
+            36,
+            350,
+            20
+        );
+
+        drawText(window, font,
+            "Choose Algorithm:",
+            24,
+            40,
+            100
+        );
+
+        drawText(window, font,
+            "1 - FCFS",
+            22,
+            60,
+            150
+        );
+
+        drawText(window, font,
+            "2 - Non Preemptive SJF",
+            22,
+            60,
+            190
+        );
+
+        drawText(window, font,
+            "3 - Preemptive SJF",
+            22,
+            60,
+            230
+        );
+
+        drawText(window, font,
+            "4 - Round Robin",
+            22,
+            60,
+            270
+        );
+
+        drawText(window, font,
+            "5 - Priority Non Preemptive",
+            22,
+            60,
+            310
+        );
+
+        drawText(window, font,
+            "6 - Priority Preemptive",
+            22,
+            60,
+            350
+        );
+
+        drawText(window, font,
+            "Press ENTER to Run",
+            24,
+            60,
+            430
+        );
+
+        std::string algoName = "None";
+
+        if (selectedAlgorithm == 1)
+            algoName = "FCFS";
+
+        else if (selectedAlgorithm == 2)
+            algoName = "Non Preemptive SJF";
+
+        else if (selectedAlgorithm == 3)
+            algoName = "Preemptive SJF";
+
+        else if (selectedAlgorithm == 4)
+            algoName = "Round Robin";
+
+        else if (selectedAlgorithm == 5)
+            algoName = "Priority Non Preemptive";
+
+        else if (selectedAlgorithm == 6)
+            algoName = "Priority Preemptive";
+
+        drawText(window, font,
+            "Selected: " + algoName,
+            24,
+            500,
+            120
+        );
+
+        // Display Result Table
+        if (simulationDone) {
+
+            drawText(window, font,
+                "Results",
+                28,
+                500,
+                180
+            );
+
+            drawText(window, font,
+                "PID   AT   BT   P   WT   TT   RT   CT",
+                20,
+                500,
+                230
+            );
+
+            int y = 270;
+
+            for (const process &p : processes) {
+
+                std::stringstream ss;
+
+                ss
+                << p.pID << "      "
+                << p.AT << "      "
+                << p.BT << "      "
+                << p.P << "      "
+                << p.WT << "      "
+                << p.TT << "      "
+                << p.RT << "      "
+                << p.CT;
+
+                drawText(window, font,
+                    ss.str(),
+                    18,
+                    500,
+                    y
+                );
+
+                y += 40;
+            }
+        }
+
+        window.display();
+    }
 }
