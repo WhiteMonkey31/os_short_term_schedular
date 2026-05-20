@@ -24,7 +24,7 @@
                 // "-O2",            // these two lines are for release build configuration of vs code, should be enabled only when you want higher compiler optimization for release builds
                 // "-DNDEBUG",      // should be enabled only for release build, not debug.
 
-                "${file}",   
+                // "${file}",   
                           /*You have two options here: 
                             If you wish to be explicit about what files get compiled, replace "${file}", with the name of each file you wish to compile, one per line, like this:
                             
@@ -32,6 +32,14 @@
                             "add.cpp",
 
                             Reader “geo” reports that you can have VS Code automatically compile all .cpp files in the directory by replacing "${file}", with "${fileDirname}\\**.cpp" (on Windows).*/
+
+                "sample.cpp",
+                "sample_backend.cpp",
+                "sample_backend.hpp",
+                "sample_display_terminal.cpp",
+                "sample_display_terminal.hpp",
+                "process.hpp",
+
 
                 // "2_x_quiz_q3_io_cpp_v1.cpp",
                 // "2_x_quiz_q3_main_v1.cpp",
