@@ -39,6 +39,8 @@
                 "sample_display_terminal.cpp",
                 "sample_display_terminal.hpp",
                 "process.hpp",
+                "sample_frontend.cpp",
+                "sample_frontend.hpp",
 
 
                 // "2_x_quiz_q3_io_cpp_v1.cpp",

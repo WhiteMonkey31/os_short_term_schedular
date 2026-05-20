@@ -4,29 +4,33 @@
 // #include<queue>
 // #include<algorithm>
 
+// main.cpp
+
+#include "sample_frontend.hpp"
+
 #include "sample_backend.hpp"
 #include "sample_display_terminal.hpp"
 
-void process_input(std::vector<process> &processes){
+// void process_input(std::vector<process> &processes){
     
-    // proceesses must start with process 0 and then continue forward
-    // processes.push_back({0,3,3,4});
-    // processes.push_back({1,4,1});
-    // processes.push_back({2,2,2});
-    // processes.push_back({3,0,4});
-    // processes.push_back({4,1,5});
+//     // proceesses must start with process 0 and then continue forward
+//     // processes.push_back({0,3,3,4});
+//     // processes.push_back({1,4,1});
+//     // processes.push_back({2,2,2});
+//     // processes.push_back({3,0,4});
+//     // processes.push_back({4,1,5});
 
 
     
-    processes.push_back({0,3,3,2});
-    processes.push_back({1,4,1,5});
-    processes.push_back({2,2,2,3});
-    processes.push_back({3,0,4,1});
-    processes.push_back({4,1,5,4});
+//     processes.push_back({0,3,3,2});
+//     processes.push_back({1,4,1,5});
+//     processes.push_back({2,2,2,3});
+//     processes.push_back({3,0,4,1});
+//     processes.push_back({4,1,5,4});
 
 
 
-}
+// }
 
 
 
@@ -37,15 +41,17 @@ void process_input(std::vector<process> &processes){
 
 
 int main(){
+
+     launch_frontend();
     
 
-    std::vector<process> processes;
-    std::queue<int> readyqueue;
+    // std::vector<process> processes;
+    // std::queue<int> readyqueue;
 
 
-    process_input(processes);               // to input processes and their data
+    // process_input(processes);               // to input processes and their data
 
-    display_table_on_terminal(processes);           // to display the initial values inputed
+    // display_table_on_terminal(processes);           // to display the initial values inputed
 
 
     // for fcfs
@@ -69,29 +75,29 @@ int main(){
 
 
     // for preemtive processes (to initiallize lbt) 
-    initialize_processes_for_preemtive(processes);      // to initialize lBT(left brust time variable) for preemtive sjf
+    // initialize_processes_for_preemtive(processes);      // to initialize lBT(left brust time variable) for preemtive sjf
     
 
-    // for preemtive sjf
-    // execute_preemptive_sjf(processes);                  // to execute processes in preemtive sjf (does not use readyqueue)
+    // // for preemtive sjf
+    // // execute_preemptive_sjf(processes);                  // to execute processes in preemtive sjf (does not use readyqueue)
 
 
-    // for round robin
-    // execute_round_robin(processes);
+    // // for round robin
+    // // execute_round_robin(processes);
 
 
-    // for priority
-    // execute_priority_non_preemptive(processes);         // for non preemtive priority 
-    execute_priority_preemptive(processes);             // for preemtive priority
+    // // for priority
+    // // execute_priority_non_preemptive(processes);         // for non preemtive priority 
+    // execute_priority_preemptive(processes);             // for preemtive priority
 
 
 
 
-    // for calculations
-    calculate_TT_WT_RT(processes);                 // improved version to calculate the remaining data from CT
+    // // for calculations
+    // calculate_TT_WT_RT(processes);                 // improved version to calculate the remaining data from CT
 
-    // to display final result
-    display_final_result(processes, readyqueue);                // to display the final results and calculations table (Gant Chart)
+    // // to display final result
+    // display_final_result(processes, readyqueue);                // to display the final results and calculations table (Gant Chart)
     
 
 
