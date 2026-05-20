@@ -7,6 +7,8 @@
 int currentTime{0};
 int total_cpu_time{0};
 int timeQuantum{2};
+int minPriority{0};
+int maxPriority{5};
 
 struct process{
     // data fetch
@@ -303,6 +305,106 @@ void execute_round_robin(std::vector<process> &processes){      // to execute pr
     }
 }
 
+void execute_priority_non_preemptive(std::vector<process> &processes){
+
+    int completed = 0;
+    int currentTime = 0;
+
+    while (completed < processes.size()) {
+
+        int highest = -1;
+
+        // Find highest priority process
+        for (int i = 0; i < processes.size(); i++) {
+
+            if (processes[i].AT <= currentTime &&
+                !processes[i].in_queue)
+            {
+                if (highest == -1 ||
+                    processes[i].P >
+                    processes[highest].P)
+                {
+                    highest = i;
+                }
+            }
+        }
+
+        // CPU Idle
+        if (highest == -1) {
+
+            currentTime++;
+            continue;
+        }
+
+        // Response time start
+        processes[highest].assignTime =
+            currentTime;
+
+        // Execute completely
+        currentTime += processes[highest].BT;
+
+        processes[highest].CT =
+            currentTime;
+
+        processes[highest].in_queue = true;
+
+        completed++;
+    }
+}
+
+void execute_priority_preemptive(std::vector<process> &processes){
+    int completed = 0;
+    int currentTime = 0;
+
+    while (completed < processes.size()) {
+
+        int highest = -1;
+
+        // Find highest priority available process
+        for (int i = 0; i < processes.size(); i++) {
+
+            if (processes[i].AT <= currentTime &&
+                processes[i].lBT > 0)
+            {
+                if (highest == -1 ||
+                    processes[i].P >
+                    processes[highest].P)
+                {
+                    highest = i;
+                }
+            }
+        }
+
+        // CPU Idle
+        if (highest == -1) {
+
+            currentTime++;
+            continue;
+        }
+
+        // First response
+        if (processes[highest].lBT ==
+            processes[highest].BT)
+        {
+            processes[highest].assignTime =
+                currentTime;
+        }
+
+        // Execute for 1 unit
+        processes[highest].lBT--;
+
+        currentTime++;
+
+        // Finished
+        if (processes[highest].lBT == 0) {
+
+            processes[highest].CT =
+                currentTime;
+
+            completed++;
+        }
+    }
+}
 
 void calculate_TT_WT_RT(std::vector<process> &processes){  // improved func to calculate the remaining data of the process from CT
     for(process &p:processes){
@@ -401,7 +503,14 @@ int main(){
 
 
     // for round robin
-    execute_round_robin(processes);
+    // execute_round_robin(processes);
+
+
+    // for priority
+    // execute_priority_non_preemptive(processes);         // for non preemtive priority 
+    execute_priority_preemptive(processes);             // for preemtive priority
+
+
 
 
     // for calculations
