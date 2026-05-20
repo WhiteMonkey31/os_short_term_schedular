@@ -6,7 +6,7 @@
 
 int currentTime{0};
 int total_cpu_time{0};
-
+int timeQuantum{2};
 
 struct process{
     // data fetch
@@ -34,23 +34,47 @@ struct process{
 void process_input(std::vector<process> &processes){
     
     // proceesses must start with process 0 and then continue forward
-    processes.push_back({0,3,3});
-    processes.push_back({1,4,1});
-    processes.push_back({2,2,2});
-    processes.push_back({3,0,4});
-    processes.push_back({4,1,5});
+    // processes.push_back({0,3,3,4});
+    // processes.push_back({1,4,1});
+    // processes.push_back({2,2,2});
+    // processes.push_back({3,0,4});
+    // processes.push_back({4,1,5});
+
+
+    
+    processes.push_back({0,3,3,2});
+    processes.push_back({1,4,1,5});
+    processes.push_back({2,2,2,3});
+    processes.push_back({3,0,4,1});
+    processes.push_back({4,1,5,4});
+
+
+
 }
 
 void display_table_on_terminal(const std::vector<process> processes){
+    bool priority_given{false};
+    for(const process p:processes){
+        if(p.P!=0){             // to check if priority is given or not?
+            priority_given=true;
+        }
+    }
     std::cout<<"Data Given:\n";
     std::cout<<"------------------------------------------------------\n";
-    std::cout<<"pID\t|\tAT\t|\tBT\t|\tP\n";
-    std::cout<<"------------------------------------------------------\n";
+    std::cout<<"pID\t|\tAT\t|\tBT\t|\t";
+    if(priority_given){
+        std::cout<<"P";
+    }
+    std::cout<<"\n------------------------------------------------------\n";
+    
     for(const process &p : processes){
         std::cout<<"P-"<<p.pID<<"\t|\t"
                 <<p.AT<<"\t|\t"
-                <<p.BT<<"\t|\t"
-                <<'\n';
+                <<p.BT<<"\t|\t";
+        if(priority_given){
+            std::cout<<p.P<<"\t|\t";
+        }
+        std::cout<<'\n';
         
     }
     std::cout<<"------------------------------------------------------\n";
@@ -138,7 +162,7 @@ void fill_readyqueue_non_preemtive_sjf(std::vector<process> &processes, std::que
     }
 }
 
-void initialize_processes_preemtive_sjf(std::vector<process> &processes)
+void initialize_processes_for_preemtive(std::vector<process> &processes)
 {
     for (process &p : processes) {
 
@@ -197,6 +221,84 @@ void execute_preemptive_sjf(std::vector<process> &processes)
                 currentTime;
 
             completed++;
+        }
+    }
+}
+
+void execute_round_robin(std::vector<process> &processes){      // to execute process in round robin 
+
+    std::queue<int> readyqueue;
+
+    int currentTime = 0;
+    int completed = 0;
+
+    while (completed < processes.size()) {
+
+        // Add newly arrived processes
+        for (int i = 0; i < processes.size(); i++) {
+
+            if (processes[i].AT <= currentTime &&
+                !processes[i].in_queue &&
+                processes[i].lBT > 0)
+            {
+                readyqueue.push(i);
+
+                processes[i].in_queue = true;
+            }
+        }
+
+        // CPU Idle
+        if (readyqueue.empty()) {
+
+            currentTime++;
+            continue;
+        }
+
+        int idx = readyqueue.front();
+        readyqueue.pop();
+
+        // First response
+        if (processes[idx].lBT ==
+            processes[idx].BT)
+        {
+            processes[idx].assignTime =
+                currentTime;
+        }
+
+        // Execute process
+        int executeTime =
+            std::min(timeQuantum,
+                     processes[idx].lBT);
+
+        processes[idx].lBT -= executeTime;
+
+        currentTime += executeTime;
+
+        // Add newly arrived during execution
+        for (int i = 0; i < processes.size(); i++) {
+
+            if (processes[i].AT <= currentTime &&
+                !processes[i].in_queue &&
+                processes[i].lBT > 0)
+            {
+                readyqueue.push(i);
+
+                processes[i].in_queue = true;
+            }
+        }
+
+        // If process finished
+        if (processes[idx].lBT == 0) {
+
+            processes[idx].CT =
+                currentTime;
+
+            completed++;
+        }
+        else {
+
+            // Put back into queue
+            readyqueue.push(idx);
         }
     }
 }
@@ -290,18 +392,23 @@ int main(){
     // executing_readyqueue_fcfs(processes, readyqueue);           // to calculate CT of each process
 
 
-    // for preemtive sjf
-    initialize_processes_preemtive_sjf(processes);      // to initialize lBT(left brust time variable) for preemtive sjf
+    // for preemtive processes (to initiallize lbt) 
+    initialize_processes_for_preemtive(processes);      // to initialize lBT(left brust time variable) for preemtive sjf
     
-    execute_preemptive_sjf(processes);                  // to execute processes in preemtive sjf (does not use readyqueue)
+
+    // for preemtive sjf
+    // execute_preemptive_sjf(processes);                  // to execute processes in preemtive sjf (does not use readyqueue)
 
 
+    // for round robin
+    execute_round_robin(processes);
 
 
-
+    // for calculations
     calculate_TT_WT_RT(processes);                 // improved version to calculate the remaining data from CT
 
-    display_final_result(processes, readyqueue);                // to display the final results and calculations
+    // to display final result
+    display_final_result(processes, readyqueue);                // to display the final results and calculations table (Gant Chart)
     
 
 
