@@ -10,8 +10,8 @@
 
 int main(){
 
-    // bool terminal{true};       // keep false for Graphic, True for Terminal based application run
-    bool terminal{false};
+    bool terminal{true};       // keep false for Graphic, True for Terminal based application run
+    // bool terminal{false};
 
     if(!terminal){
         launch_frontend();

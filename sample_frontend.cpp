@@ -233,6 +233,8 @@ void algo_select_terminal(std::vector<process> &processes, std::queue<int> &read
         // for preemtive processes (to initiallize lbt) 
         initialize_processes_for_preemtive(processes);      // to initialize lBT(left brust time variable) for preemtive sjf
 
+        bool exit_{false};
+
         int num{};
         std::cout<<"Algorithms Available: \n";
         std::cout<<"1. FCFS.\n";
@@ -241,6 +243,7 @@ void algo_select_terminal(std::vector<process> &processes, std::queue<int> &read
         std::cout<<"4. Round Robin.\n";
         std::cout<<"5. Priority (Non-Preemtive).\n";
         std::cout<<"6. Priority (Preemtive).\n";
+        std::cout<<"0. Exit.\n";
         std::cout<<"\nChoose Option (1-6): ";
         std::cin>>num;
 
@@ -294,17 +297,27 @@ void algo_select_terminal(std::vector<process> &processes, std::queue<int> &read
                 // for priority (preemtive)
                 execute_priority_preemptive(processes);             // for preemtive priority
             }
+            case 0:{
+                std::cout<<"Exiting Program.\n";
+                exit_ = true;       // to exit the program
+
+                break;
+                // return 0;
+            }
             default:{
                 std::cout<<"Sorry, you have selected wrong option. Please select the correct option.\n";
                 // recursion 
-                // algo_select_terminal(processes,readyqueue);
+                algo_select_terminal(processes,readyqueue);
             }
         }
 
-        // for calculations
-        calculate_TT_WT_RT(processes);                 // improved version to calculate the remaining data from CT
+        if(!exit_){
+            // for calculations
+            calculate_TT_WT_RT(processes);                 // improved version to calculate the remaining data from CT
 
-        // to display final result
-        display_final_result(processes, readyqueue);                // to display the final results and calculations table (Gant Chart)
+            // to display final result
+            display_final_result(processes, readyqueue);                // to display the final results and calculations table (Gant Chart)
     
+        }
+        
 }
