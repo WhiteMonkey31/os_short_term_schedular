@@ -26,7 +26,8 @@ void display_final_result(const std::vector<process> processes, const std::queue
 
 
 
-void display_readyqueue(const std::vector<process> processes, std::queue<int> readyqueue){          // to display the data contained in Ready Queue
+void display_readyqueue(const std::vector<process> processes, std::queue<int> readyqueue){         // to display the data contained in Ready Queue
+    std::cout<<'\n';
     while(!readyqueue.empty()){
         int idx=readyqueue.front();
         readyqueue.pop();

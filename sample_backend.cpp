@@ -9,6 +9,35 @@ int minPriority{0};
 int maxPriority{5};
 
 
+
+void process_input(std::vector<process> &processes){
+    
+    // proceesses must start with process 0 and then continue forward
+    // processes.push_back({0,3,3,4});
+    // processes.push_back({1,4,1});
+    // processes.push_back({2,2,2});
+    // processes.push_back({3,0,4});
+    // processes.push_back({4,1,5});
+
+
+    
+    processes.push_back({0,3,3,2});
+    processes.push_back({1,4,1,5});
+    processes.push_back({2,2,2,3});
+    processes.push_back({3,0,4,1});
+    processes.push_back({4,1,5,4});
+
+    
+    // Sample Input
+    // processes.push_back({0,3,3,2});
+    // processes.push_back({1,4,1,5});
+    // processes.push_back({2,2,2,3});
+    // processes.push_back({3,0,4,1});
+    // processes.push_back({4,1,5,4});
+
+}
+
+
 void fill_readyqueue_non_preemtive_fcfs(std::vector<process> processes, std::queue<int> &readyqueue){        // to put processes in Ready Queue in FCFS
     // int n=processes.size();
     // bool check[n];
@@ -148,9 +177,9 @@ void execute_preemptive_sjf(std::vector<process> &processes)
     }
 }
 
-void execute_round_robin(std::vector<process> &processes){      // to execute process in round robin 
+void execute_round_robin(std::vector<process> &processes, std::queue<int> &readyqueue){      // to execute process in round robin 
 
-    std::queue<int> readyqueue;
+    // std::queue<int> readyqueue;
 
     int currentTime = 0;
     int completed = 0;

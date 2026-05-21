@@ -6,7 +6,7 @@
 #include "process.hpp"
 
 
-// void process_input(std::vector<process> &processes);
+void process_input(std::vector<process> &processes);
 
 void fill_readyqueue_non_preemtive_fcfs(std::vector<process> processes, std::queue<int> &readyqueue);
 
@@ -16,7 +16,7 @@ void initialize_processes_for_preemtive(std::vector<process> &processes);
 
 void execute_preemptive_sjf(std::vector<process> &processes);
 
-void execute_round_robin(std::vector<process> &processes);
+void execute_round_robin(std::vector<process> &processes, std::queue<int> &readyqueue);
 
 void execute_priority_non_preemptive(std::vector<process> &processes);
 
